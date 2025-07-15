@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Button from "@/components/atoms/Button";
 import ApperIcon from "@/components/ApperIcon";
-
+import Chart from "react-apexcharts";
+import { useFeedback } from "@/hooks/useFeedback";
 const ThankYouScreen = ({ feedbackData, onReset }) => {
   const [countdown, setCountdown] = useState(5);
-
+  const { feedback, loading: chartLoading, calculateAverages } = useFeedback();
+  const [chartData, setChartData] = useState(null);
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdown(prev => {
@@ -15,11 +17,17 @@ const ThankYouScreen = ({ feedbackData, onReset }) => {
         }
         return prev - 1;
       });
-    }, 1000);
+}, 1000);
 
     return () => clearInterval(timer);
   }, [onReset]);
 
+  useEffect(() => {
+    if (feedback.length > 0) {
+      const averages = calculateAverages();
+      setChartData(averages);
+    }
+  }, [feedback, calculateAverages]);
   const getSatisfactionLabel = (value) => {
     const labels = ["Poor", "Fair", "Good", "Very Good", "Excellent"];
     return labels[value - 1] || "";
@@ -122,13 +130,117 @@ const ThankYouScreen = ({ feedbackData, onReset }) => {
                 </div>
               </div>
             </div>
-          </motion.div>
+</motion.div>
         )}
 
+        {/* Average Ratings Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.5 }}
+          className="bg-gray-50 rounded-2xl p-6 mb-8"
+        >
+          <h3 className="font-display font-semibold text-gray-900 mb-4 text-center">
+            Average Ratings Overview
+          </h3>
+          
+          {chartLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+            </div>
+          ) : chartData ? (
+            <div className="h-64">
+              <Chart
+                options={{
+                  chart: {
+                    type: 'bar',
+                    toolbar: {
+                      show: false
+                    },
+                    background: 'transparent'
+                  },
+                  colors: ['#a855f7', '#8b5cf6', '#10b981'],
+                  plotOptions: {
+                    bar: {
+                      borderRadius: 8,
+                      columnWidth: '60%',
+                      distributed: true
+                    }
+                  },
+                  dataLabels: {
+                    enabled: true,
+                    formatter: (val) => val.toFixed(1),
+                    style: {
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      colors: ['#fff']
+                    }
+                  },
+                  xaxis: {
+                    categories: ['Service Satisfaction', 'Ease of Use', 'Recommendation'],
+                    labels: {
+                      style: {
+                        fontSize: '12px',
+                        fontWeight: 500,
+                        colors: '#6b7280'
+                      }
+                    },
+                    axisBorder: {
+                      show: false
+                    },
+                    axisTicks: {
+                      show: false
+                    }
+                  },
+                  yaxis: {
+                    max: 10,
+                    labels: {
+                      style: {
+                        fontSize: '12px',
+                        colors: '#6b7280'
+                      }
+                    }
+                  },
+                  grid: {
+                    show: true,
+                    strokeDashArray: 3,
+                    borderColor: '#e5e7eb'
+                  },
+                  legend: {
+                    show: false
+                  },
+                  tooltip: {
+                    y: {
+                      formatter: (val, opts) => {
+                        const labels = ['Service Satisfaction', 'Ease of Use', 'Recommendation'];
+                        const scales = ['(1-5 scale)', '(1-5 scale)', '(1-10 scale)'];
+                        return `${val.toFixed(1)} ${scales[opts.dataPointIndex]}`;
+                      }
+                    }
+                  }
+                }}
+                series={[{
+                  name: 'Average Rating',
+                  data: [
+                    parseFloat(chartData.satisfaction),
+                    parseFloat(chartData.easeOfUse),
+                    parseFloat(chartData.nps)
+                  ]
+                }]}
+                type="bar"
+                height={200}
+              />
+            </div>
+          ) : (
+            <div className="text-center text-gray-500 h-64 flex items-center justify-center">
+              No feedback data available for analysis
+            </div>
+          )}
+        </motion.div>
+<motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7, duration: 0.5 }}
           className="space-y-4"
         >
           <Button
@@ -141,10 +253,10 @@ const ThankYouScreen = ({ feedbackData, onReset }) => {
             Provide More Feedback
           </Button>
 
-          <motion.p
+<motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.5 }}
+            transition={{ delay: 0.8, duration: 0.5 }}
             className="text-sm text-gray-600"
           >
             Returning to welcome screen in{" "}

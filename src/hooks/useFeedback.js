@@ -36,6 +36,22 @@ export const useFeedback = () => {
     }
   };
 
+const calculateAverages = () => {
+    if (feedback.length === 0) return null;
+    
+    const totals = feedback.reduce((acc, item) => ({
+      satisfaction: acc.satisfaction + item.satisfaction,
+      easeOfUse: acc.easeOfUse + item.easeOfUse,
+      nps: acc.nps + item.nps
+    }), { satisfaction: 0, easeOfUse: 0, nps: 0 });
+    
+    return {
+      satisfaction: (totals.satisfaction / feedback.length).toFixed(1),
+      easeOfUse: (totals.easeOfUse / feedback.length).toFixed(1),
+      nps: (totals.nps / feedback.length).toFixed(1)
+    };
+  };
+
   useEffect(() => {
     loadFeedback();
   }, []);
@@ -45,6 +61,7 @@ export const useFeedback = () => {
     loading,
     error,
     loadFeedback,
-    submitFeedback
+    submitFeedback,
+    calculateAverages
   };
 };

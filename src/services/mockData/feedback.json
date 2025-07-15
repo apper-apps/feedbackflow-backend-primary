@@ -1,0 +1,42 @@
+[
+  {
+    "Id": 1,
+    "satisfaction": 5,
+    "easeOfUse": 4,
+    "nps": 9,
+    "timestamp": "2024-01-15T10:30:00.000Z",
+    "sessionId": "session_1705312200000_abc123"
+  },
+  {
+    "Id": 2,
+    "satisfaction": 4,
+    "easeOfUse": 5,
+    "nps": 8,
+    "timestamp": "2024-01-15T11:45:00.000Z",
+    "sessionId": "session_1705316700000_def456"
+  },
+  {
+    "Id": 3,
+    "satisfaction": 3,
+    "easeOfUse": 3,
+    "nps": 6,
+    "timestamp": "2024-01-15T14:20:00.000Z",
+    "sessionId": "session_1705326000000_ghi789"
+  },
+  {
+    "Id": 4,
+    "satisfaction": 5,
+    "easeOfUse": 5,
+    "nps": 10,
+    "timestamp": "2024-01-15T16:15:00.000Z",
+    "sessionId": "session_1705332900000_jkl012"
+  },
+  {
+    "Id": 5,
+    "satisfaction": 2,
+    "easeOfUse": 2,
+    "nps": 4,
+    "timestamp": "2024-01-15T18:30:00.000Z",
+    "sessionId": "session_1705341000000_mno345"
+  }
+]
